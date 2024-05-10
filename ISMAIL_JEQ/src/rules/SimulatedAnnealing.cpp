@@ -25,17 +25,18 @@ void SimulatedAnnealing::run(Instance& instance)
     Solution solution = initial_solution(initial_solution_rule, instance);
     Solution last_solution = Solution(instance.get_size());
 
-    double T = 1000.0;  // Initial temperature
-    double alpha = 0.8;  // Cooling rate
+    std::uniform_real_distribution<double> distribution(0.0,1.0);
+    double T = 4000.0;  // Initial temperature
+    double alpha = 0.99;  // Cooling rate
     int iteration = 1;
 
-    std::uniform_real_distribution<double> distribution(0.0,1.0);
+    int reheating_iteration = 100;
+    double reheating = 1.2; //Reheating rate
 
-    double time = instance.get_max_run_time()/50;
-    while (duration.count()<time)
+    while (duration.count()<instance.get_max_run_time())
     {
         last_solution = solution;
-        solution= improvement(choice_rule, neighbourhood_rule, instance, solution);
+        solution = improvement(choice_rule, neighbourhood_rule, instance, solution);
 
         if (solution.score() > last_solution.score())
         {
@@ -44,13 +45,17 @@ void SimulatedAnnealing::run(Instance& instance)
         else
         {
             double p = distribution(generator);
-            if (p < exp((solution.score() - last_solution.score()) / T))
+            double delta_score = solution.score() - last_solution.score();
+            if (p < 1 / (1 + exp(delta_score / T)))
             {
                 last_solution = solution;
             }
         }
         T = T * alpha;
         iteration++;
+        if(iteration % reheating_iteration==0){
+            T=T*reheating;
+        }
         duration = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - start);
     }
     std::cerr << "Iterations: " << iteration << std::endl;

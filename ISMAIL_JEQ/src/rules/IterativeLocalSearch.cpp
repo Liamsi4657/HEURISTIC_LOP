@@ -25,8 +25,7 @@ IterativeLocalSearch::run(Instance& instance)
     int iteration = 1;
 
     solution = improvement(choice_rule, neighbourhood_rule, instance, solution);
-    double time = instance.get_max_run_time()/50;
-    while (duration.count() < time)
+    while (duration.count() < instance.get_max_run_time())
     {
         Solution last_solution = solution;
         solution = perturbation(instance, solution);
@@ -35,12 +34,10 @@ IterativeLocalSearch::run(Instance& instance)
         {
             solution = last_solution;
         }
-        std::cerr << "Iteration: " << iteration << " Score: " << solution.score() << std::endl;
         iteration++;
         duration = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - start);
-        std::cerr << "Duration: " << duration.count() << std::endl;
     }
-    // std::cerr << "Final score: " << solution.score() << std::endl;
+    std::cerr << "Iteration: " << iteration << " Final Score: " << solution.score() << std::endl;
     
     instance.set_solution(solution);
 }

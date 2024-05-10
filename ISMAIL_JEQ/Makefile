@@ -14,4 +14,4 @@ statistics: lop
 	./statistics.sh
 
 clean:
-	rm -f src/*~ src/*.o src/rules/*.o statistics/*/*.txt lop
+	rm -f src/*~ src/*.o src/rules/*.o statistics/reports/*.txt statistics/statiscal_tests/*.txt statistics/correlation/*.txt lop

@@ -157,12 +157,12 @@ Instance::get_best_known_solution() const
     return this->best_known_instance_solution_;
 }
 
-double
-Instance::get_relative_percentage_deviation()
+double Instance::get_relative_percentage_deviation()
 {
-    this->relative_deviation_percentage_ = 100 * (best_known_instance_solution_ - instance_solution_.score()) / best_known_instance_solution_;
+    this->relative_deviation_percentage_ = 100.0 * (best_known_instance_solution_ - instance_solution_.score()) / best_known_instance_solution_;
     return this->relative_deviation_percentage_;
 }
+
 
 void
 Instance::update_permutation(std::vector<int> permutation)

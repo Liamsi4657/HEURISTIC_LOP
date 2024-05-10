@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 experiment() {
     options="$1"
@@ -31,12 +31,8 @@ experiments() {
     # experiment "--vnd --cw --transpose-exchange-insert --first" ./statistics/experiments/vnd_cw_transpose-exchange-insert_first.txt
     # experiment "--vnd --cw --transpose-insert-exchange --first " ./statistics/experiments/vnd_cw_transpose-insert-exchange_first.txt
 
-    experiment "--sa --cw --insert --first" ./statistics/experiments/sa_random_insert_first.txt
-    
+    experiment "--sa --cw --insert --first" ./statistics/experiments/sa_cw_insert_first.txt   
     experiment "--ils --cw --insert --first" ./statistics/experiments/ils_cw_insert_first.txt
-
-
-
 }
 
 
@@ -46,7 +42,7 @@ report() {
 
     filename=$(basename "$input_file" .txt)
     awk -v filename="$filename" '{sum1 += $4; sum2 += $5; count++} END {printf "%s %f %f\n", filename, (count > 0) ? sum1 / count : 0, sum2}' "$input_file" >> "$output_file"
-}
+}  
 
 
 reports() {
@@ -81,7 +77,7 @@ compute_average() {
                     runtime2=${columns2[4]}
                     echo $runtime1
                     echo $runtime2
-                    max_runtime=$(python -c "print(format((($runtime1 + $runtime2)*100 / 2), '.3f'))")
+                    max_runtime=$(echo "scale=3; ($runtime1 + $runtime2)*100/2" | bc)
                     echo "${instance_name} ${max_runtime}" >> ./statistics/reports/max_runtime.txt
                     break
                 fi
@@ -93,10 +89,14 @@ compute_average() {
 }
 
 statistical_tests() {
-    "C:\\Program Files\\R\\R-4.0.3\\bin\\Rscript" ./statistical_tests.r
+    /usr/bin/Rscript ./statistical_tests.r
+}
+correlation() {
+    /usr/bin/Rscript ./correlation_plot.r
 }
 
-experiments
+# experiments
 reports
-# compute_average
-# statistical_tests
+#compute_average
+statistical_tests
+correlation
